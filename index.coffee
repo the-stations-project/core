@@ -3,8 +3,8 @@
 INIT_SERVER = require './server.js'
 
 # CONSTANTS
-_DIR = 'data'
-_CFG_PATH = PJN _DIR, 'config.json'
+_DIRS = ['data', 'data/interface']
+_CFG_PATH = PJN _DIRS[0], 'config.json'
 
 _FOPTS =
 	encoding: 'utf8'
@@ -16,12 +16,13 @@ config =
 
 # MAIN
 INIT = () ->
-	unless FCHK _DIR
-		MKDIR _DIR
+	for dir in _DIRS
+		unless FCHK dir
+			MKDIR dir
 
 	do READ_CFG
 
-	INIT_SERVER config
+	INIT_SERVER config, _DIRS[1]
 
 READ_CFG = () ->
 	if FCHK _CFG_PATH

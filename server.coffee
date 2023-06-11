@@ -2,13 +2,13 @@
 { WRITE } = require 'coffee-standards'
 EXPRESS = require 'express'
 
-module.exports = (config) ->
+module.exports = (config, ifaceDir) ->
 	# GLOBAL
 	APP = EXPRESS()
-	
+	dir = EXPRESS.static ifaceDir
+
 	# MAIN
-	APP.get '/', (req, res) ->
-		res.send 'Hello, world!'
-	
+	APP.use dir
+
 	APP.listen config.port, () ->
 		WRITE 'server up'
