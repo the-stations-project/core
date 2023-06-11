@@ -1,0 +1,25 @@
+{
+  "name": "@frugal-cloud/core",
+  "version": "0.0.1-beta1",
+  "description": "Minimal local cloud",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"build": "cfc *.coffee",
+	"start": "npm run build; node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frugal-cloud/core.git"
+  },
+  "author": "viridian035",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/frugal-cloud/core/issues"
+  },
+  "homepage": "https://github.com/frugal-cloud/core#readme",
+  "dependencies": {
+    "coffee-standards": "^1.0.0",
+    "express": "^4.18.2"
+  }
+}
