@@ -1,6 +1,8 @@
 # IMPORTS
 { WRITE } = require 'coffee-standards'
 
+PARSE = require './parser.js'
+
 EXPRESS = require 'express'
 HTTP = require 'http'
 WS = require 'ws'
@@ -27,6 +29,7 @@ module.exports = (config, ifaceDir) ->
 
 		ws.on 'message', (data) ->
 			msg = do data.toString
-			ws.send "echo: #{msg}"
+			PARSE msg, (rply) ->
+				ws.send rply
 
 		ws.send 'welcome'
