@@ -13,6 +13,7 @@ _FOPTS =
 config =
 	port: 8080
 	allowRegistration: false
+	basePath: '/home/frugal-cloud'
 
 # MAIN
 INIT = () ->
@@ -21,6 +22,7 @@ INIT = () ->
 			MKDIR dir
 
 	do READ_CFG
+	do REPAIR_BASE
 
 	INIT_SERVER config, _DIRS[1]
 
@@ -42,6 +44,13 @@ READ_CFG = () ->
 		configString = JSON.stringify config, null, 4
 		FOUT _CFG_PATH, configString
 		WRITE 'done'
+
+REPAIR_BASE = () ->
+	unless FCHK config.basePath
+		try
+			MKDIR config.basePath
+		catch
+			WRITE 'could not create base path. consider running with root access'
 
 #####
 do INIT

@@ -1,48 +1,52 @@
 { WRITE } = require 'coffee-standards'
 
-module.exports = (msg, RPLY_TXT) ->
+EXEC = require './child-process-manager.js'
+
+module.exports = (msg, config, REPLY_TXT) ->
 	id = '0'
 
 	# SUPPORT
-	RPLY = (rply) ->
+	REPLY = (reply) ->
 		obj =
 			id: id
-			reply: rply
+			reply: reply
 		txt = JSON.stringify obj
-		RPLY_TXT txt
+		REPLY_TXT txt
 	
 	ERROR = () ->
-		RPLY 'error'
+		REPLY 'error'
 
 	# MAIN
 	try
 		obj = JSON.parse msg
-		unless obj.header
-			WRITE 'refusing to parse message without header'
-			do ERROR
-			return
-		unless obj.id
-			WRITE 'refusing to parse message without id'
+		unless obj.header or obj.id
 			do ERROR
 			return
 
 		id = obj.id
-		PARSE obj, RPLY, ERROR
+		try
+			await PARSE obj, config, REPLY, ERROR
+		catch
+			WRITE "crashed running #{msg}"
+			do ERROR
 
 	catch
-		WRITE """
-		failed to parse message:
-		#{msg}
-		"""
-
+		WRITE "error parsing #{msg}"
 		do ERROR
 
-	RPLY 'end'
+	REPLY 'end'
 
-PARSE = (obj, RPLY, ERROR) ->
-	switch obj.header
-		when 'test'
-			RPLY 'ok'
-		else
-			WRITE 'message header invalid'
-			do ERROR
+PARSE = (obj, config, REPLY, ERROR) ->
+	new Promise (EXIT) ->
+		WRITE obj.header
+
+		switch obj.header
+			when 'test'
+				REPLY 'ok'
+				do EXIT
+			when 'exec'
+				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, EXIT
+			else
+				WRITE 'message header invalid'
+				do ERROR
+				do EXIT

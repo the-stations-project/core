@@ -3,6 +3,9 @@
   "version": "0.0.1-beta1",
   "description": "Minimal local cloud",
   "main": "index.js",
+  "bin": {
+	  "start": "index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cfc *.coffee",

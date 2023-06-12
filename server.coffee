@@ -29,7 +29,5 @@ module.exports = (config, ifaceDir) ->
 
 		ws.on 'message', (data) ->
 			msg = do data.toString
-			PARSE msg, (rply) ->
-				ws.send rply
-
-		ws.send 'welcome'
+			PARSE msg, config, (reply) ->
+				ws.send reply
