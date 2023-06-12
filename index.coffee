@@ -1,5 +1,7 @@
 # IMPORTS
 { WRITE, FCHK, FIN, FOUT, MKDIR, PJN } = require 'coffee-standards'
+
+INTEGRITY_CHECK = require './integrity-control.js'
 INIT_SERVER = require './server.js'
 
 # CONSTANTS
@@ -22,6 +24,7 @@ INIT = () ->
 			MKDIR dir
 
 	do READ_CFG
+	do INTEGRITY_CHECK
 	do REPAIR_BASE
 
 	INIT_SERVER config, _DIRS[1]
@@ -37,7 +40,7 @@ READ_CFG = () ->
 				config[key] = val
 			WRITE 'done'
 		catch
-			WRITE 'could not parse config file'
+			WRITE 'WRITE could not parse config file'
 			do process.exit
 	else
 		WRITE 'creating configuration file...'
@@ -50,7 +53,8 @@ REPAIR_BASE = () ->
 		try
 			MKDIR config.basePath
 		catch
-			WRITE 'could not create base path. consider running with root access'
+			WRITE 'ERROR could not create base path. consider running with root access'
+			do process.exit
 
 #####
 do INIT

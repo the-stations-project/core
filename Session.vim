@@ -91,13 +91,15 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +56 index.coffee
+badd +16 index.coffee
 badd +8 server.coffee
 badd +1 package.json
 badd +1 package.json\!
 badd +2 data/interface/index.html
-badd +57 parser.coffee
-badd +4 child-process-manager.coffee
+badd +10 parser.coffee
+badd +10 child-process-manager.coffee
+badd +13 user-manager.coffee
+badd +8 integrity-control.coffee
 argglobal
 %argdel
 $argadd index.coffee
@@ -105,7 +107,7 @@ set stal=2
 tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabrewind
-edit child-process-manager.coffee
+edit user-manager.coffee
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -125,7 +127,7 @@ set winwidth=1
 exe 'vert 1resize ' . ((&columns * 92 + 92) / 185)
 exe 'vert 2resize ' . ((&columns * 92 + 92) / 185)
 argglobal
-balt server.coffee
+balt parser.coffee
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -196,7 +198,7 @@ setlocal lispwords=
 setlocal nolist
 setlocal listchars=
 setlocal makeencoding=
-setlocal makeprg=coffee\ -c\ \ \ $*\ child-process-manager.coffee
+setlocal makeprg=coffee\ -c\ \ \ $*\ user-manager.coffee
 setlocal matchpairs=(:),{:},[:]
 setlocal nomodeline
 setlocal modifiable
@@ -256,16 +258,16 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 11 - ((10 * winheight(0) + 26) / 52)
+let s:l = 4 - ((3 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 11
-normal! 05|
+keepjumps 4
+normal! 0
 wincmd w
 argglobal
-if bufexists(fnamemodify("parser.coffee", ":p")) | buffer parser.coffee | else | edit parser.coffee | endif
-balt server.coffee
+if bufexists(fnamemodify("index.coffee", ":p")) | buffer index.coffee | else | edit index.coffee | endif
+balt integrity-control.coffee
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -336,7 +338,7 @@ setlocal lispwords=
 setlocal nolist
 setlocal listchars=
 setlocal makeencoding=
-setlocal makeprg=coffee\ -c\ \ \ $*\ parser.coffee
+setlocal makeprg=coffee\ -c\ \ \ $*\ index.coffee
 setlocal matchpairs=(:),{:},[:]
 setlocal nomodeline
 setlocal modifiable
@@ -396,12 +398,12 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 43 - ((42 * winheight(0) + 26) / 52)
+let s:l = 57 - ((49 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 43
-normal! 073|
+keepjumps 57
+normal! 027|
 wincmd w
 2wincmd w
 exe 'vert 1resize ' . ((&columns * 92 + 92) / 185)
@@ -700,6 +702,7 @@ if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
+nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :

@@ -1,6 +1,7 @@
 { WRITE } = require 'coffee-standards'
 
 EXEC = require './child-process-manager.js'
+{ INIT_USR } = require './user-manager.js'
 
 module.exports = (msg, config, REPLY_TXT) ->
 	id = '0'
@@ -46,6 +47,8 @@ PARSE = (obj, config, REPLY, ERROR) ->
 				do EXIT
 			when 'exec'
 				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, EXIT
+			when 'init'
+				INIT_USR config.basePath, obj.username
 			else
 				WRITE 'message header invalid'
 				do ERROR
