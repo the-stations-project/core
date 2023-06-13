@@ -1,7 +1,7 @@
 { WRITE } = require 'coffee-standards'
 
 EXEC = require './child-process-manager.js'
-{ INIT_USR } = require './user-manager.js'
+{ USERADD, USERDEL } = require './user-manager.js'
 
 module.exports = (msg, config, REPLY_TXT) ->
 	id = '0'
@@ -39,21 +39,24 @@ module.exports = (msg, config, REPLY_TXT) ->
 
 PARSE = (obj, config, REPLY, ERROR) ->
 	new Promise (EXIT) ->
-		WRITE obj.header
-
 		switch obj.header
 			when 'test'
 				REPLY 'ok'
 				do EXIT
 			when 'exec'
 				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, EXIT
-			when 'init'
+			when 'create-account'
 				try
-					INIT_USR config.basePath, obj.username
+					USERADD config.basePath, obj.username
+				catch
+					do ERROR
+					do EXIT
+			when 'close-account'
+				try
+					USERDEL config.basePath, obj.username
 				catch
 					do ERROR
 					do EXIT
 			else
-				WRITE 'message header invalid'
 				do ERROR
 				do EXIT

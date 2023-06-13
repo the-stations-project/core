@@ -1,18 +1,33 @@
-{ EXEC, MKDIR, PJN, WRITE } = require 'coffee-standards'
+{ DEL, EXEC, FCHK, MKDIR, PJN, WRITE } = require 'coffee-standards'
 
-INIT = (basePath, username) ->
-	EXEC "id -u #{username}"
-
+# SUPPOORT
+GET_PATHS = (basePath, username) ->
 	userDir = PJN basePath, username
 	privateDir = PJN userDir, 'private'
 	publicDir = PJN userDir, 'public'
-	dirNames = [ userDir, privateDir, publicDir ]
+	[ userDir, privateDir, publicDir ]
 
-	for dir in dirNames
+# MAIN
+USERADD = (basePath, username) ->
+	EXEC "useradd #{username}"
+
+	dirs = GET_PATHS basePath, username
+
+	for dir in dirs
 		MKDIR dir
 		EXEC "chown #{username} #{dir}"
 
-	EXEC "chmod 700 #{privateDir}"
+	EXEC "chmod 700 #{dirs[1]}"
+
+USERDEL = (basePath, username) ->
+	dirs = GET_PATHS basePath, username
+
+	for dir in dirs
+		if FCHK dir
+			DEL dir
+	
+	EXEC "userdel #{username}"
 
 module.exports =
-	INIT_USR: INIT
+	USERADD: USERADD,
+	USERDEL: USERDEL
