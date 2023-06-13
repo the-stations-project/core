@@ -48,7 +48,11 @@ PARSE = (obj, config, REPLY, ERROR) ->
 			when 'exec'
 				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, EXIT
 			when 'init'
-				INIT_USR config.basePath, obj.username
+				try
+					INIT_USR config.basePath, obj.username
+				catch
+					do ERROR
+					do EXIT
 			else
 				WRITE 'message header invalid'
 				do ERROR

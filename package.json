@@ -4,7 +4,7 @@
   "description": "Minimal local cloud",
   "main": "index.js",
   "bin": {
-	  "start": "index.js"
+    "start": "index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/frugal-cloud/core#readme",
   "dependencies": {
-    "coffee-standards": "^1.0.0",
+    "coffee-standards": "^1.0.1",
     "express": "^4.18.2",
     "ws": "^8.13.0"
   }
