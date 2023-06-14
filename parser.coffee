@@ -46,6 +46,11 @@ PARSE = (obj, config, REPLY, ERROR) ->
 			when 'exec'
 				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, EXIT
 			when 'create-account'
+				unless config.allowRegistration == true
+					do ERROR
+					do EXIT
+					return
+
 				try
 					USERADD config.basePath, obj.username
 				catch
