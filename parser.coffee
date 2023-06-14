@@ -2,8 +2,9 @@
 
 EXEC = require './child-process-manager.js'
 { USERADD, USERDEL } = require './user-manager.js'
+{ AUTH, FORCE_SET_PASSWD, SET_PASSWD } = require './security.js'
 
-module.exports = (msg, config, REPLY_TXT) ->
+module.exports = (msg, config, _DIRS, REPLY_TXT) ->
 	id = '0'
 
 	# SUPPORT
@@ -26,9 +27,11 @@ module.exports = (msg, config, REPLY_TXT) ->
 
 		id = obj.id
 		try
-			await PARSE obj, config, REPLY, ERROR
-		catch
+			await PARSE obj, config, _DIRS, REPLY, ERROR
+		catch error
 			WRITE "crashed running #{msg}"
+			WRITE error
+			WRITE '###\n'
 			do ERROR
 
 	catch
@@ -37,7 +40,7 @@ module.exports = (msg, config, REPLY_TXT) ->
 
 	REPLY 'end'
 
-PARSE = (obj, config, REPLY, ERROR) ->
+PARSE = (obj, config, _DIRS, REPLY, ERROR) ->
 	new Promise (EXIT) ->
 		switch obj.header
 			when 'test'
@@ -51,17 +54,15 @@ PARSE = (obj, config, REPLY, ERROR) ->
 					do EXIT
 					return
 
-				try
-					USERADD config.basePath, obj.username
-				catch
-					do ERROR
-					do EXIT
+				USERADD config.basePath, obj.username
 			when 'close-account'
-				try
-					USERDEL config.basePath, obj.username
-				catch
-					do ERROR
-					do EXIT
+				USERDEL config.basePath, obj.username
+			when 'signin'
+				REPLY AUTH obj.username, obj.password, _DIRS.pswd
+			when 'passwd'
+				SET_PASSWD obj.username, obj.password, _DIRS.pswd
+			when 'passwd!'
+				FORCE_SET_PASSWD obj.username, obj.password, _DIRS.pswd
 			else
 				do ERROR
 				do EXIT

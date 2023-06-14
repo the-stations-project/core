@@ -7,12 +7,12 @@ EXPRESS = require 'express'
 HTTP = require 'http'
 WS = require 'ws'
 
-module.exports = (config, ifaceDir) ->
+module.exports = (config, _DIRS) ->
 	# GLOBAL
 	APP = EXPRESS()
 
 	# SERVER
-	route = EXPRESS.static ifaceDir
+	route = EXPRESS.static _DIRS.iface
 	APP.use route
 	server = APP.listen config.port, () ->
 		WRITE "server up on port #{config.port}"
@@ -29,5 +29,5 @@ module.exports = (config, ifaceDir) ->
 
 		ws.on 'message', (data) ->
 			msg = do data.toString
-			PARSE msg, config, (reply) ->
+			PARSE msg, config, _DIRS, (reply) ->
 				ws.send reply

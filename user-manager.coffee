@@ -28,6 +28,7 @@ USERDEL = (basePath, username) ->
 	
 	EXEC "userdel #{username}"
 
+# EXPORT
 module.exports =
 	USERADD: USERADD,
 	USERDEL: USERDEL

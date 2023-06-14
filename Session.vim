@@ -77,7 +77,6 @@ set shiftwidth=4
 set smartindent
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set tabstop=4
-set updatetime=1
 let s:so_save = &g:so | let s:siso_save = &g:siso | setg so=0 siso=0 | setl so=-1 siso=-1
 let v:this_session=expand("<sfile>:p")
 silent only
@@ -91,15 +90,16 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +16 index.coffee
+badd +57 index.coffee
 badd +8 server.coffee
 badd +1 package.json
 badd +1 package.json\!
 badd +2 data/interface/index.html
 badd +10 parser.coffee
 badd +10 child-process-manager.coffee
-badd +13 user-manager.coffee
+badd +4 user-manager.coffee
 badd +8 integrity-control.coffee
+badd +0 security.coffee
 argglobal
 %argdel
 $argadd index.coffee
@@ -107,7 +107,7 @@ set stal=2
 tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
 tabrewind
-edit user-manager.coffee
+edit security.coffee
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -124,10 +124,10 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 92 + 92) / 185)
-exe 'vert 2resize ' . ((&columns * 92 + 92) / 185)
+exe 'vert 1resize ' . ((&columns * 74 + 75) / 150)
+exe 'vert 2resize ' . ((&columns * 75 + 75) / 150)
 argglobal
-balt parser.coffee
+balt user-manager.coffee
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -198,7 +198,7 @@ setlocal lispwords=
 setlocal nolist
 setlocal listchars=
 setlocal makeencoding=
-setlocal makeprg=coffee\ -c\ \ \ $*\ user-manager.coffee
+setlocal makeprg=coffee\ -c\ \ \ $*\ security.coffee
 setlocal matchpairs=(:),{:},[:]
 setlocal nomodeline
 setlocal modifiable
@@ -258,16 +258,16 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 4 - ((3 * winheight(0) + 26) / 52)
+let s:l = 1 - ((0 * winheight(0) + 16) / 32)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 4
+keepjumps 1
 normal! 0
 wincmd w
 argglobal
-if bufexists(fnamemodify("index.coffee", ":p")) | buffer index.coffee | else | edit index.coffee | endif
-balt integrity-control.coffee
+if bufexists(fnamemodify("parser.coffee", ":p")) | buffer parser.coffee | else | edit parser.coffee | endif
+balt index.coffee
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -338,7 +338,7 @@ setlocal lispwords=
 setlocal nolist
 setlocal listchars=
 setlocal makeencoding=
-setlocal makeprg=coffee\ -c\ \ \ $*\ index.coffee
+setlocal makeprg=coffee\ -c\ \ \ $*\ parser.coffee
 setlocal matchpairs=(:),{:},[:]
 setlocal nomodeline
 setlocal modifiable
@@ -398,16 +398,15 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 57 - ((49 * winheight(0) + 26) / 52)
+let s:l = 1 - ((0 * winheight(0) + 16) / 32)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 57
-normal! 027|
+keepjumps 1
+normal! 0
 wincmd w
-2wincmd w
-exe 'vert 1resize ' . ((&columns * 92 + 92) / 185)
-exe 'vert 2resize ' . ((&columns * 92 + 92) / 185)
+exe 'vert 1resize ' . ((&columns * 74 + 75) / 150)
+exe 'vert 2resize ' . ((&columns * 75 + 75) / 150)
 tabnext
 edit package.json
 argglobal
@@ -542,7 +541,7 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 6 - ((5 * winheight(0) + 26) / 52)
+let s:l = 6 - ((3 * winheight(0) + 16) / 32)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
@@ -681,7 +680,7 @@ setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 4 - ((3 * winheight(0) + 26) / 52)
+let s:l = 4 - ((2 * winheight(0) + 16) / 32)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt

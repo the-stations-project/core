@@ -5,8 +5,11 @@ INTEGRITY_CHECK = require './integrity-control.js'
 INIT_SERVER = require './server.js'
 
 # CONSTANTS
-_DIRS = ['data', 'data/interface']
-_CFG_PATH = PJN _DIRS[0], 'config.json'
+_DIRS =
+	'data': 'data',
+	'iface': 'data/interface'
+	'pswd': 'data/pswd-hashes'
+_CFG_PATH = PJN _DIRS.data, 'config.json'
 
 _FOPTS =
 	encoding: 'utf8'
@@ -15,11 +18,11 @@ _FOPTS =
 config =
 	port: 8080
 	allowRegistration: false
-	basePath: '/home/frugal-cloud'
+	basePath: '/home'
 
 # MAIN
 INIT = () ->
-	for dir in _DIRS
+	for dir in Object.values _DIRS
 		unless FCHK dir
 			MKDIR dir
 
@@ -27,7 +30,7 @@ INIT = () ->
 	do INTEGRITY_CHECK
 	do REPAIR_BASE
 
-	INIT_SERVER config, _DIRS[1]
+	INIT_SERVER config, _DIRS
 
 READ_CFG = () ->
 	if FCHK _CFG_PATH
