@@ -19,13 +19,15 @@ USERADD = (basePath, username) ->
 
 	EXEC "chmod 700 #{dirs[1]}"
 
-USERDEL = (basePath, username) ->
+USERDEL = (basePath, username, pswdDir) ->
 	dirs = GET_PATHS basePath, username
 
 	for dir in dirs
 		if FCHK dir
 			DEL dir
-	
+
+	DEL PJN pswdDir, username
+
 	EXEC "userdel #{username}"
 
 # EXPORT
