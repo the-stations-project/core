@@ -2,10 +2,10 @@
 
 EXEC = require './child-process-manager.js'
 { USERADD, USERDEL } = require './user-manager.js'
-{ AUTH, FORCE_SET_PASSWD, SET_PASSWD } = require './security.js'
-{ CHECK_SES, LIST_SES, TRACK_SES, UNTRACK_SES } = require './session-tracker.js'
+{ AUTH, SET_PASSWD } = require './security.js'
+{ CHECK_SES, LIST_SES, LIST_SES_IP, TRACK_SES, UNTRACK_SES } = require './session-tracker.js'
 
-module.exports = (msg, config, ip, _DIRS, REPLY_TXT) ->
+module.exports = (msg, config, ip, ws, _DIRS, REPLY_TXT) ->
 	id = '0'
 
 	# SUPPORT
@@ -28,7 +28,7 @@ module.exports = (msg, config, ip, _DIRS, REPLY_TXT) ->
 
 		id = obj.id
 		try
-			await PARSE obj, config, ip, _DIRS, REPLY, ERROR
+			await PARSE obj, config, ip, ws, _DIRS, REPLY, ERROR
 		catch error
 			WRITE "crashed running #{msg}"
 			WRITE error
@@ -41,56 +41,102 @@ module.exports = (msg, config, ip, _DIRS, REPLY_TXT) ->
 
 	REPLY 'end'
 
-PARSE = (obj, config, ip, _DIRS, REPLY, ERROR) ->
-	new Promise (EXIT) ->
-		GUARD = () ->
-			unless CHECK_SES obj.username, ip
-				do ERROR
-				do EXIT
+PARSE = (obj, config, ip, ws, _DIRS, REPLY, ERROR) ->
+	new Promise (RESOLVE) ->
+		FORCE_EXIT = () ->
+			do ERROR
+			do RESOLVE
+			throw 'forced exit'
+
+		GUARD = (...args) ->
+			undefinedIndex = args.indexOf undefined
+			unless undefinedIndex == -1
+				do FORCE_EXIT
+
+		REQUIRE_TRACKING = () ->
+			unless CHECK_SES ip, obj.username
+				do FORCE_EXIT
+
+		REQUIRE_AUTH = () ->
+			GUARD obj.username, obj.password
+			auth = AUTH obj.username, obj.password, _DIRS.pswd
+			unless auth == true
+				do FORCE_EXIT
 
 		switch obj.header
 			# basic
 			when 'test'
 				REPLY 'ok'
-				do EXIT
-
-			# exec
-			when 'exec'
-				do GUARD
-				WRITE 'test'
-				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, EXIT
+				do RESOLVE
 
 			# account
 			when 'create-account'
 				unless config.allowRegistration == true
-					do ERROR
-					do EXIT
-					return
+					do FORCE_EXIT
+				GUARD obj.username
 
 				USERADD config.basePath, obj.username
+				REPLY 'ok'
 			when 'close-account'
-				do GUARD
+				do REQUIRE_TRACKING
+				do REQUIRE_AUTH
+				GUARD obj.username
+
 				USERDEL config.basePath, obj.username, _DIRS.pswd
+				REPLY 'ok'
 			when 'passwd'
-				do GUARD
-				SET_PASSWD obj.username, obj.password, _DIRS.pswd
+				do REQUIRE_TRACKING
+				do REQUIRE_AUTH
+				GUARD obj.username, obj.password, obj.newPassword
+
+				SET_PASSWD obj.username, obj.newPassword, _DIRS.pswd
+				REPLY 'ok'
 			when 'passwd!'
-				do GUARD
-				FORCE_SET_PASSWD obj.username, obj.password, _DIRS.pswd
+				do REQUIRE_TRACKING
+				do REQUIRE_AUTH
+				GUARD obj.username, obj.targetUser, obj.newPassword
+				adminIndex = config.administrators.indexOf obj.username
+				if adminIndex == -1
+					do FORCE_EXIT
+
+				SET_PASSWD obj.targetUser, obj.newPassword, _DIRS.pswd
+				REPLY 'ok'
+
+			# exec
+			when 'exec'
+				do REQUIRE_TRACKING
+				GUARD obj.username, obj.command
+
+				EXEC obj.username, obj.command, config.basePath, REPLY, ERROR, RESOLVE
+
+			# messaging
+			when 'broadcast'
+				do REQUIRE_TRACKING
+				GUARD obj.channel, obj.targetUsers
+
+				for user in obj.targetUsers
+					sessions = LIST_SES user
+					for session in sessions
+						WRITE session
 
 			# sessions
 			when 'sign-in'
+				GUARD obj.username, obj.password
+
 				result = AUTH obj.username, obj.password, _DIRS.pswd
 				if result == true
-					TRACK_SES obj.username, ip
+					TRACK_SES ip, obj.username, ws
 				REPLY result
 			when 'get-sessions'
-				do GUARD
-				REPLY LIST_SES obj.username
+				do REQUIRE_TRACKING
+				GUARD obj.username
+
+				REPLY LIST_SES_IP obj.username
 			when 'sign-out'
-				do GUARD
-				UNTRACK_SES obj.username, ip
+				do REQUIRE_TRACKING
+				UNTRACK_SES ip
+				REPLY 'ok'
 			
 			else
 				do ERROR
-				do EXIT
+				do RESOLVE

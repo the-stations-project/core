@@ -4,10 +4,10 @@
 sessions = new Map()
 
 # MAIN
-CHECK_SES = (ip, uname) ->
+CHECK_SES = (uname, ip) ->
 	match = sessions.get ip
 	if match
-		match.username == uname
+		match == uname
 	else
 		false
 
@@ -26,11 +26,11 @@ LIST_SES = (uname) ->
 			entry[1].username == uname)
 
 LIST_SES_IP = (uname) ->
-	res = LIST_SES uname
-		.map ((x) -> x[0])
+	TO_IP = (session) ->
+		session[0]
 
-	WRITE res
-	return res
+	return LIST_SES uname
+		.map TO_IP
 
 # EXPORT
 module.exports =
@@ -38,4 +38,3 @@ module.exports =
 	TRACK_SES: TRACK_SES,
 	UNTRACK_SES: UNTRACK_SES,
 	LIST_SES: LIST_SES,
-	LIST_SES_IP: LIST_SES_IP,

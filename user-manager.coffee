@@ -32,5 +32,5 @@ USERDEL = (basePath, username, pswdDir) ->
 
 # EXPORT
 module.exports =
-	USERADD: USERADD,
+	USERADD: USERADD
 	USERDEL: USERDEL

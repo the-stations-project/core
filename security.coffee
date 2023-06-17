@@ -17,19 +17,12 @@ AUTH = (username, passwd, dir) ->
 	givenHash = HASH passwd
 	givenHash == correctHash
 
-SET_PASSWD = (username, passwd, dir, ERROR) ->
-	unless AUTH username, passwd
-		do ERROR
-
-	FORCE_SET_PASSWD username, passwd, dir
-
-FORCE_SET_PASSWD = (username, passwd, dir) ->
+SET_PASSWD = (username, passwd, dir) ->
 	path = PJN dir, username
 	hashed = HASH passwd
 	FOUT path, hashed
 
 # EXPORT
 module.exports =
-	AUTH: AUTH,
-	SET_PASSWD: SET_PASSWD,
-	FORCE_SET_PASSWD: FORCE_SET_PASSWD,
+	AUTH: AUTH
+	SET_PASSWD: SET_PASSWD

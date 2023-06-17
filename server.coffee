@@ -26,9 +26,8 @@ module.exports = (config, _DIRS) ->
 
 	wsServer.on 'connection', (ws, req) ->
 		ip = req.socket.remoteAddress
-		WRITE "new connection from '#{ip}'"
 
 		ws.on 'message', (data) ->
 			msg = do data.toString
-			PARSE msg, config, ip, _DIRS, (reply) ->
+			PARSE msg, config, ip, ws, _DIRS, (reply) ->
 				ws.send reply
