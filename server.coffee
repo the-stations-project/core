@@ -1,11 +1,12 @@
 # IMPORTS
 { WRITE } = require 'coffee-standards'
 
-PARSE = require './parser.js'
-
 EXPRESS = require 'express'
 HTTP = require 'http'
 WS = require 'ws'
+
+PARSE = require './parser.js'
+{ UNTRACK_WS } = require './session-tracker.js'
 
 module.exports = (config, _DIRS) ->
 	# GLOBAL
@@ -31,3 +32,6 @@ module.exports = (config, _DIRS) ->
 			msg = do data.toString
 			PARSE msg, config, ip, ws, _DIRS, (reply) ->
 				ws.send reply
+
+		ws.on 'close', () ->
+			UNTRACK_WS ip, ws

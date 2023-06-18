@@ -12,13 +12,39 @@ CHECK_SES = (ip, uname) ->
 		false
 
 TRACK_SES = (ip, uname, ws) ->
+	match = sessions.get(ip)
+	WRITE match
+	if match and match.username == uname
+		TRACK_WS ip, ws
+		return
+
 	val =
 		username: uname
-		ws: ws
+		ws: [ws]
 	sessions.set ip, val
+
+TRACK_WS = (ip, ws) ->
+	match = sessions.get(ip)
+	unless match
+		return
+
+	unless ws in match.ws
+		match.ws.push ws
 
 UNTRACK_SES = (ip) ->
 	sessions.delete ip
+
+UNTRACK_WS = (ip, ws) ->
+	match = sessions.get(ip)
+	unless match
+		return
+
+	index = match.ws.indexOf(ws)
+	if index == -1
+		return
+
+	# remove ws
+	match.ws.splice(index, 1)
 
 LIST_SES = (uname) ->
 	[...sessions.entries()]
@@ -34,8 +60,10 @@ LIST_SES_IP = (uname) ->
 
 # EXPORT
 module.exports =
-	CHECK_SES: CHECK_SES,
-	TRACK_SES: TRACK_SES,
-	UNTRACK_SES: UNTRACK_SES,
-	LIST_SES: LIST_SES,
-	LIST_SES_IP: LIST_SES_IP,
+	CHECK_SES: CHECK_SES
+	TRACK_SES: TRACK_SES
+	TRACK_WS: TRACK_WS
+	UNTRACK_SES: UNTRACK_SES
+	UNTRACK_WS: UNTRACK_WS
+	LIST_SES: LIST_SES
+	LIST_SES_IP: LIST_SES_IP
