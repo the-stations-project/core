@@ -1,10 +1,10 @@
 {
-  "name": "@frugal-cloud/core",
+  "name": "@stpr/core",
   "version": "0.0.1-beta1",
   "description": "Minimal local cloud",
   "main": "index.js",
   "bin": {
-    "start-cloud": "index.js"
+    "boot-station": "index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

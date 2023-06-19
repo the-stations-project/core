@@ -21,7 +21,7 @@ config =
 	port: 8080
 	allowRegistration: false
 	basePath: '/home'
-	administrators: ['']
+	administrators: ['root']
 
 # MAIN
 INIT = () ->

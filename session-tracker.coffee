@@ -13,7 +13,6 @@ CHECK_SES = (ip, uname) ->
 
 TRACK_SES = (ip, uname, ws) ->
 	match = sessions.get(ip)
-	WRITE match
 	if match and match.username == uname
 		TRACK_WS ip, ws
 		return
@@ -55,7 +54,6 @@ LIST_SES_IP = (uname) ->
 	res = LIST_SES uname
 		.map ((x) -> x[0])
 
-	WRITE res
 	return res
 
 # EXPORT

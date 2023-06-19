@@ -114,10 +114,20 @@ PARSE = (obj, config, ip, ws, _DIRS, REPLY, ERROR) ->
 				do REQUIRE_TRACKING
 				GUARD obj.channel, obj.targetUsers
 
+				obj.id = undefined
+
 				for user in obj.targetUsers
 					sessions = LIST_SES user
 					for session in sessions
-						WRITE session
+						sockets = session[1].ws
+						unless (Array.isArray sockets)
+							do ERROR
+							do FORCE_EXIT
+						
+						for ws in sockets
+							ws.send JSON.stringify obj
+
+				REPLY 'ok'
 
 			# sessions
 			when 'sign-in'
